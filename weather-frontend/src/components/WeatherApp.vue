@@ -236,15 +236,18 @@
 import axios from "axios";
 import moment from "moment";
 
-import weatherBackground from "@/stores/weatherBackground.js";
+// Weather background management
+const weatherBackground = {
+  backgroundClass: "",
+  backgroundVideo: null
+};
 
 export default {
   data() {
     return {
       isDropdownVisible: false,
       isLogoutPromptVisible: false,
-
-
+      username: "",
       city: "London",
       weather: {
         temp: "___",
@@ -281,11 +284,12 @@ export default {
         icon: "https://openweathermap.org/img/wn/04d.png",
         temp: "____",
       }),
+      recognition: null,
     };
   },
 
   computed: {
-    backgroundClass(){
+    backgroundClass() {
       return weatherBackground.backgroundClass;
     },
     backgroundVideo() {
@@ -300,6 +304,11 @@ export default {
         const geoResponse = await axios.get(
           `https://api.openweathermap.org/geo/1.0/direct?q=${this.city}&limit=1&appid=69ce9849eb65509427ae460da399e041`
         );
+
+        if (!geoResponse.data.length) {
+          throw new Error("City not found");
+        }
+
         const { lat, lon, name, country } = geoResponse.data[0];
 
         // Fetch weather data
@@ -324,12 +333,12 @@ export default {
         this.weather = {
           temp: (weatherData.main.temp - 273.15).toFixed(2),
           description: weatherData.weather[0].description,
-          condition: weatherData.weather[0].main.toLowerCase(), // ✅ Store weather condition
+          condition: weatherData.weather[0].main.toLowerCase(),
           icon: `https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`,
           date: moment().format("dddd, MMM DD"),
           city: name,
           country: country,
-          airQuality: "Good", // Placeholder
+          airQuality: "Good",
           sunrise: moment.unix(weatherData.sys.sunrise).format("hh:mm A"),
           sunset: moment.unix(weatherData.sys.sunset).format("hh:mm A"),
           humidity: weatherData.main.humidity,
@@ -347,11 +356,8 @@ export default {
           o3: airPollutionData.o3,
         };
 
-        // ✅ Set the background based on the weather condition
+        // Set the background based on the weather condition
         this.setWeatherBackground(this.weather.condition);
-
-        
-        
 
         localStorage.setItem(
           "weatherData",
@@ -384,7 +390,7 @@ export default {
         alert("Failed to fetch weather data");
       }
     },
-  
+
     speakWeather() {
       if (!this.weather.temp || !this.weather.city) {
         alert("Weather data not available for speech output.");
@@ -394,19 +400,16 @@ export default {
       const message = `The weather is ${this.weather.temp} degrees Celsius in ${this.weather.city}.`;
       const speech = new SpeechSynthesisUtterance(message);
       speech.lang = "en-US";
-      speech.rate = 1; // Normal speed
-      speech.volume = 1; // Full volume
+      speech.rate = 1;
+      speech.volume = 1;
       window.speechSynthesis.speak(speech);
     },
 
     setWeatherBackground(condition) {
-      // Debug: Log the raw condition from API
       console.log("Raw weather condition:", condition);
 
-      // Normalize the condition to lowercase and trim
       condition = condition.toLowerCase().trim();
 
-      // Map conditions to video assets
       const backgrounds = {
         clear: { 
           class: "sunny", 
@@ -438,7 +441,6 @@ export default {
         }
       };
 
-      // Determine which background to use
       let selectedBg = backgrounds.default;
       
       if (condition.includes("clear")) {
@@ -457,13 +459,9 @@ export default {
         selectedBg = backgrounds.thunderstorm;
       }
 
-      
-      // Use nextTick to ensure DOM updates properly
       weatherBackground.backgroundClass = selectedBg.class;
       weatherBackground.backgroundVideo = selectedBg.video;
-
     },
-
 
     speakSunriseSunset() {
       if (!this.weather.sunrise || !this.weather.sunset) {
@@ -474,8 +472,8 @@ export default {
       const message = `The sunrise today is at ${this.weather.sunrise}, and the sunset is at ${this.weather.sunset}.`;
       const speech = new SpeechSynthesisUtterance(message);
       speech.lang = "en-US";
-      speech.rate = 1; // Normal speed
-      speech.volume = 1; // Full volume
+      speech.rate = 1;
+      speech.volume = 1;
       window.speechSynthesis.speak(speech);
     },
 
@@ -486,23 +484,20 @@ export default {
       }
 
       try {
-        // Extract and convert the temperature values
         const temp1 = parseFloat(this.forecast[0]?.temp || 0);
         const temp2 = parseFloat(this.forecast[1]?.temp || 0);
         const temp3 = parseFloat(this.forecast[2]?.temp || 0);
         const temp4 = parseFloat(this.forecast[3]?.temp || 0);
         const temp5 = parseFloat(this.forecast[4]?.temp || 0);
 
-        // Sum and manually divide by 5
         const totalTemp = temp1 + temp2 + temp3 + temp4 + temp5;
         const avgTemp = (totalTemp / 5).toFixed(2);
 
-        // Construct the speech message
         const message = `The average weather over the next 5 days is ${avgTemp} degrees Celsius.`;
         const speech = new SpeechSynthesisUtterance(message);
         speech.lang = "en-US";
-        speech.rate = 1; // Normal speed
-        speech.volume = 1; // Full volume
+        speech.rate = 1;
+        speech.volume = 1;
         window.speechSynthesis.speak(speech);
       } catch (error) {
         console.error("Error calculating average temperature:", error);
@@ -517,14 +512,12 @@ export default {
         });
         const { latitude, longitude } = position.coords;
 
-        // Fetch city name from coordinates
         const reverseGeoResponse = await axios.get(
           `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=69ce9849eb65509427ae460da399e041`
         );
         const { name } = reverseGeoResponse.data[0];
         this.city = name;
 
-        // Fetch weather data
         this.fetchWeather();
       } catch (error) {
         console.error("Error fetching user coordinates:", error);
@@ -538,21 +531,21 @@ export default {
     },
     
     showLogoutPrompt() {
-    this.isLogoutPromptVisible = true; // Show logout confirmation
+      this.isLogoutPromptVisible = true;
     },
 
     cancelLogout() {
-      this.isLogoutPromptVisible = false; // Hide logout confirmation
+      this.isLogoutPromptVisible = false;
     },
 
     confirmLogout() {
-      localStorage.removeItem("access_token"); // Clear user session
-      this.isLogoutPromptVisible = false; // Hide popup
-      this.$router.push("/login"); // Redirect to login page
+      localStorage.removeItem("access_token");
+      this.isLogoutPromptVisible = false;
+      this.$router.push("/login");
     },
 
     getUserInfo() {
-      this.username = localStorage.getItem("username") || "Guest"; // Get username from localStorage
+      this.username = localStorage.getItem("username") || "Guest";
     },
 
     startVoiceRecognition() {
@@ -566,23 +559,76 @@ export default {
       this.recognition.lang = "en-US";
       this.recognition.interimResults = false;
       this.recognition.maxAlternatives = 1;
+      this.recognition.continuous = false;
+
+      const speak = (message) => {
+        return new Promise(resolve => {
+          const speech = new SpeechSynthesisUtterance(message);
+          speech.lang = "en-US";
+          speech.rate = 1;
+          speech.volume = 1;
+          speech.onend = resolve;
+          window.speechSynthesis.speak(speech);
+        });
+      };
+
+      const handleError = async (errorType = "not_found") => {
+        const messages = {
+          not_found: "I couldn't find that city. Please try saying a valid city name again.",
+          no_speech: "I didn't hear anything. Please say the name of a city.",
+          default: "Sorry, I didn't understand. Please try again.",
+          invalid_city: "That city doesn't exist in our database. Please try a different city name."
+        };
+        
+        const message = messages[errorType] || messages.default;
+        await speak(message);
+        this.startVoiceRecognition();
+      };
+
+      this.recognition.onresult = async (event) => {
+        if (!event.results || !event.results[0]) {
+          await handleError("no_speech");
+          return;
+        }
+
+        const transcript = event.results[0][0].transcript.trim();
+        if (!transcript) {
+          await handleError("no_speech");
+          return;
+        }
+
+        this.city = transcript;
+        try {
+          // First check if city exists by fetching coordinates
+          const geoResponse = await axios.get(
+            `https://api.openweathermap.org/geo/1.0/direct?q=${this.city}&limit=1&appid=69ce9849eb65509427ae460da399e041`
+          );
+
+          if (!geoResponse.data.length) {
+            await handleError("invalid_city");
+            return;
+          }
+
+          // Only proceed with weather fetch if city is valid
+          await this.fetchWeather();
+          await speak(`Showing weather for ${this.weather.city}`);
+        } catch (error) {
+          console.error("Error:", error);
+          await handleError("not_found");
+        }
+      };
+
+      this.recognition.onerror = async (event) => {
+        console.error("Speech recognition error:", event.error);
+        const errorMap = {
+          'no-speech': 'no_speech',
+          'audio-capture': 'no_speech',
+          'not-allowed': 'no_speech'
+        };
+        await handleError(errorMap[event.error] || 'default');
+      };
 
       this.recognition.start();
-
-      this.recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        this.city = transcript;
-        this.fetchWeather();
-      };
-
-      this.recognition.onerror = (event) => {
-        console.error("Speech recognition error:", event.error);
-        alert("Error occurred in speech recognition: " + event.error);
-      };
-
-      this.recognition.onspeechend = () => {
-        this.recognition.stop();
-      };
     },
   },
 
@@ -592,7 +638,6 @@ export default {
   },
 };
 </script>
-
 
 <style>
 @import "@/assets/style.css";

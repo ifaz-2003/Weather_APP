@@ -119,40 +119,97 @@ export default {
       this.isLogoutPromptVisible = true; // Show logout confirmation
     },
 
-    startVoiceRecognition() {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        alert("Your browser does not support speech recognition.");
+    speak(message) {
+    return new Promise(resolve => {
+      const speech = new SpeechSynthesisUtterance(message);
+      speech.lang = "en-US";
+      speech.rate = 1;
+      speech.volume = 1;
+      speech.onend = resolve;
+      window.speechSynthesis.speak(speech);
+    });
+  },
+
+  startVoiceRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Your browser does not support speech recognition.");
+      return;
+    }
+
+    this.recognition = new SpeechRecognition();
+    this.recognition.lang = "en-US";
+    this.recognition.interimResults = false;
+    this.recognition.maxAlternatives = 1;
+    this.recognition.continuous = false;
+
+    const handleError = async (errorType = "not_found") => {
+      const messages = {
+        not_found: "I couldn't find weather data for that city. Please try again.",
+        no_speech: "I didn't hear anything. Please say the name of a city.",
+        default: "Sorry, I didn't understand. Please try again.",
+        invalid_city: "That city doesn't exist in our database. Please try a different city name."
+      };
+      
+      const message = messages[errorType] || messages.default;
+      await this.speak(message); // Use this.speak()
+      this.startVoiceRecognition();
+    };
+
+    this.recognition.onresult = async (event) => {
+      if (!event.results || !event.results[0]) {
+        await handleError("no_speech");
         return;
       }
 
-      this.recognition = new SpeechRecognition();
-      this.recognition.lang = "en-US";
-      this.recognition.interimResults = false;
-      this.recognition.maxAlternatives = 1;
+      const transcript = event.results[0][0].transcript.trim();
+      if (!transcript) {
+        await handleError("no_speech");
+        return;
+      }
 
-      this.recognition.start();
+      this.newCity = transcript;
+      try {
+        const geoResponse = await axios.get(
+          `https://api.openweathermap.org/geo/1.0/direct?q=${this.newCity}&limit=1&appid=69ce9849eb65509427ae460da399e041`
+        );
 
-      this.recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        this.newCity = transcript;  // ✅ Store city name
-        this.isAddCityPromptVisible = true;  // ✅ Show confirmation popup
+        if (!geoResponse.data.length) {
+          await handleError("invalid_city");
+          return;
+        }
+
+        await this.speak(`Found ${this.newCity}. Would you like to save this city?`);
+        this.isAddCityPromptVisible = true;
+      } catch (error) {
+        console.error("Error:", error);
+        await handleError("not_found");
+      }
+    };
+
+    this.recognition.onerror = async (event) => {
+      console.error("Speech recognition error:", event.error);
+      const errorMap = {
+        'no-speech': 'no_speech',
+        'audio-capture': 'no_speech',
+        'not-allowed': 'no_speech'
       };
+      await handleError(errorMap[event.error] || 'default');
+    };
 
-      this.recognition.onerror = (event) => {
-        console.error("Speech recognition error:", event.error);
-        alert("Error occurred in speech recognition: " + event.error);
-      };
+    this.recognition.start();
+  },
 
-      this.recognition.onspeechend = () => {
-        this.recognition.stop();
-      };
-    },
-
-    confirmAddCity() {
-      this.isAddCityPromptVisible = false; // ✅ Hide the popup
-      this.saveCity(); // ✅ Call saveCity() to add city
-    },
+  async confirmAddCity() {
+    this.isAddCityPromptVisible = false;
+    try {
+      await this.saveCity();
+      await this.speak(`Successfully saved ${this.newCity}`); // Use this.speak()
+    } catch (error) {
+      await this.speak("Failed to save city. Please try again."); // Use this.speak()
+      console.error("Save error:", error);
+    }
+  },
 
     cancelAddCity() {
       this.isAddCityPromptVisible = false; // ✅ Hide the popup
