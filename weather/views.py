@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 from .models import CustomUser, SavedCity
 from .forms import SignupForm
 import requests
@@ -55,6 +55,16 @@ def signup_api(request):
 def login_api(request):
     username = request.data.get("username")
     password = request.data.get("password")
+
+    # Support login via email or username
+    User = get_user_model()
+    if "@" in username:
+        try:
+            user_obj = User.objects.get(email=username)
+            username = user_obj.username
+        except User.DoesNotExist:
+            return Response({"error": "Invalid credentials"}, status=400)
+
     user = authenticate(username=username, password=password)
 
     if user:
