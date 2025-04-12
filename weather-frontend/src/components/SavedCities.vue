@@ -1,9 +1,5 @@
 <template>
-  <div :class="['weather-container', weatherBackground.backgroundClass]">
-    <video autoplay loop muted playsinline v-if="weatherBackground.backgroundVideo" class="weather-video">
-      <source :src="weatherBackground.backgroundVideo" type="video/mp4" />
-    </video>
-
+  <div class="weather-container">
     <div class="contained">
       <!-- Header with Dropdown Menu -->
       <div class="header">
@@ -90,7 +86,6 @@
 </template>
 
 <script>
-import weatherBackground from "@/stores/weatherBackground";
 import axios from "axios";
 
 export default {
@@ -105,11 +100,6 @@ export default {
     };
   },
 
-  computed: {
-    weatherBackground() {
-      return weatherBackground;
-    }
-  },
   methods: {
     // Toggle the dropdown menu
     toggleDropdown() {

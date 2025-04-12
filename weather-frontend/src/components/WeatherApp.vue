@@ -1,9 +1,5 @@
 <template>
-  <div :class="['weather-container', backgroundClass]">
-    <video autoplay loop muted playsinline v-if="backgroundVideo" class="weather-video">
-      <source :src="backgroundVideo" type="video/mp4" />
-    </video>
-
+  <div class="weather-container">
     <div class="container">
       <div class="header">
         <div class="menu-icon" @click="toggleDropDown">
@@ -236,12 +232,6 @@
 import axios from "axios";
 import moment from "moment";
 
-// Weather background management
-const weatherBackground = {
-  backgroundClass: "",
-  backgroundVideo: null
-};
-
 export default {
   data() {
     return {
@@ -288,14 +278,6 @@ export default {
     };
   },
 
-  computed: {
-    backgroundClass() {
-      return weatherBackground.backgroundClass;
-    },
-    backgroundVideo() {
-      return weatherBackground.backgroundVideo;
-    },
-  },
 
   methods: {
     async fetchWeather() {
@@ -356,9 +338,6 @@ export default {
           o3: airPollutionData.o3,
         };
 
-        // Set the background based on the weather condition
-        this.setWeatherBackground(this.weather.condition);
-
         localStorage.setItem(
           "weatherData",
           JSON.stringify({
@@ -405,63 +384,6 @@ export default {
       window.speechSynthesis.speak(speech);
     },
 
-    setWeatherBackground(condition) {
-      console.log("Raw weather condition:", condition);
-
-      condition = condition.toLowerCase().trim();
-
-      const backgrounds = {
-        clear: { 
-          class: "sunny", 
-          video: require("@/assets/sunny.mp4") 
-        },
-        clouds: { 
-          class: "cloudy", 
-          video: require("@/assets/cloudy.mp4") 
-        },
-        rain: { 
-          class: "rainy", 
-          video: require("@/assets/rainy.mp4") 
-        },
-        drizzle: {
-          class: "rainy",
-          video: require("@/assets/rainy.mp4")
-        },
-        snow: { 
-          class: "snowy", 
-          video: require("@/assets/snowy.mp4") 
-        },
-        thunderstorm: {
-          class: "rainy",
-          video: require("@/assets/rainy.mp4")
-        },
-        default: { 
-          class: "default-bg", 
-          video: require("@/assets/sunny.mp4") 
-        }
-      };
-
-      let selectedBg = backgrounds.default;
-      
-      if (condition.includes("clear")) {
-        selectedBg = backgrounds.clear;
-      } 
-      else if (condition.includes("cloud")) {
-        selectedBg = backgrounds.clouds;
-      } 
-      else if (condition.includes("rain") || condition.includes("drizzle")) {
-        selectedBg = backgrounds.rain;
-      } 
-      else if (condition.includes("snow")) {
-        selectedBg = backgrounds.snow;
-      }
-      else if (condition.includes("thunder")) {
-        selectedBg = backgrounds.thunderstorm;
-      }
-
-      weatherBackground.backgroundClass = selectedBg.class;
-      weatherBackground.backgroundVideo = selectedBg.video;
-    },
 
     speakSunriseSunset() {
       if (!this.weather.sunrise || !this.weather.sunset) {

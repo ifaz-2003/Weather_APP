@@ -1,9 +1,5 @@
 <template>
-  <div :class="['weather-container', weatherBackground.backgroundClass]">
-    <video autoplay loop muted playsinline v-if="weatherBackground.backgroundVideo" class="weather-video">
-      <source :src="weatherBackground.backgroundVideo" type="video/mp4" />
-    </video>
-
+  <div class="weather-container">
     <div class="auth-container">
       <h1>iU Weather</h1>
       <nav>
@@ -27,7 +23,6 @@
 
 <script>
 import axios from "axios";
-import weatherBackground from "@/stores/weatherBackground";
 
 
 export default {
@@ -37,12 +32,6 @@ export default {
       password: "",
       errorMessage: "",
     };
-  },
-
-  computed: {
-    weatherBackground() {
-      return weatherBackground;
-    }
   },
 
   methods: {
@@ -159,15 +148,7 @@ p {
   margin-top: 10px;
 }
 
-.weather-video {
-  position: fixed;
-  top: 0;
-  left: 0;
-  min-width: 100vw;
-  min-height: 100vh;
-  object-fit: cover;
-  z-index: -1;
-}
+
 
 .weather-container {
   position: relative;

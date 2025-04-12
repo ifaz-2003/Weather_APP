@@ -1,9 +1,5 @@
 <template>
-  <div :class="['weather-container', backgroundClass]">
-    <video autoplay loop muted playsinline v-if="backgroundVideo" class="weather-video">
-      <source :src="backgroundVideo" type="video/mp4" />
-    </video>
-    
+  <div class="weather-container">
     <div class="container">
       <div class="header">
         <div class="menu-icon" @click="toggleDropDown">
@@ -59,50 +55,33 @@
 </template>
 
 <script>
-import weatherBackground from "@/stores/weatherBackground.js";
 
 export default {
-  computed: {
-    backgroundClass(){
-      return weatherBackground.backgroundClass;
-    },
-
-    backgroundVideo(){
-      return weatherBackground.backgroundVideo;
-    }
-
-  },
   data() {
     return {
       isDropdownVisible: false,
-      isLogoutPromptVisible: false, 
-
+      isLogoutPromptVisible: false,
       username: "",
       city: "Unknown",
-
       temperature: null,
-      hobbies: []
+      hobbies: [],
     };
   },
   methods: {
     toggleDropDown() {
       this.isDropdownVisible = !this.isDropdownVisible;
     },
-
     showLogoutPrompt() {
-    this.isLogoutPromptVisible = true; // Show logout confirmation
+      this.isLogoutPromptVisible = true;
     },
-
     cancelLogout() {
-      this.isLogoutPromptVisible = false; // Hide logout confirmation
+      this.isLogoutPromptVisible = false;
     },
-
     confirmLogout() {
-      localStorage.removeItem("access_token"); // Clear user session
-      this.isLogoutPromptVisible = false; // Hide popup
-      this.$router.push("/login"); // Redirect to login page
+      localStorage.removeItem("access_token");
+      this.isLogoutPromptVisible = false;
+      this.$router.push("/login");
     },
-
     getUserInfo() {
       this.username = localStorage.getItem("username") || "Guest";
     },
@@ -112,84 +91,68 @@ export default {
       if (weatherData) {
         try {
           const parsedWeather = JSON.parse(weatherData);
-          console.log("Retrieved weatherData:", parsedWeather); // Debugging Log
-
           if (parsedWeather.temp) {
-            this.temperature = parseFloat(parsedWeather.temp); // Ensure it's a number
-            console.log("Extracted temperature:", this.temperature, "°C");
-          } else {
-            console.warn("Temperature data missing from weatherData");
+            this.temperature = parseFloat(parsedWeather.temp);
           }
         } catch (error) {
           console.error("Error parsing weatherData:", error);
         }
-      } else {
-        console.warn("No weatherData found in localStorage");
       }
 
-      this.fetchHobbies();
+      // ✅ fetchHobbies is now moved to run after city is set
     },
-
     getCity() {
       const weatherData = localStorage.getItem("weatherData");
 
       if (weatherData) {
         try {
           const parsedWeather = JSON.parse(weatherData);
-          console.log("Retrieved weatherData:", parsedWeather); // Debugging Log
-
           if (parsedWeather.city) {
             this.city = parsedWeather.city;
-            console.log("Extracted city:", this.city);
-          } else {
-            console.warn("City data missing from weatherData");
+
+            // ✅ Now that city is known, fetch hobbies
+            this.fetchHobbies();
           }
         } catch (error) {
           console.error("Error parsing weatherData:", error);
         }
-      } else {
-        console.warn("No weatherData found in localStorage");
       }
     },
-
     fetchHobbies() {
-      console.log("Fetching hobbies for temperature:", this.temperature, "°C"); // Debugging Log
-
       const hobbyMappings = {
         cold: [
-          { name: "Knitting", description: "Create warm clothes for the season.", link: "https://www.ravelry.com/" },
-          { name: "Baking", description: "Warm up by baking some treats.", link: "https://www.kingarthurbaking.com/" },
-          { name: "Reading", description: "Cozy up with a good book by the fireplace.", link: "https://www.goodreads.com/" },
-          { name: "Puzzle Solving", description: "Engage in challenging puzzles and brain teasers.", link: "https://www.jigsawplanet.com/" }
+          { name: "Knitting", description: "Create warm clothes for the season." },
+          { name: "Baking", description: "Warm up by baking some treats." },
+          { name: "Reading", description: "Cozy up with a good book by the fireplace." },
+          { name: "Puzzle Solving", description: "Engage in challenging puzzles and brain teasers." }
         ],
         cool: [
-          { name: "Hiking", description: "Enjoy the fresh air with a scenic hike.", link: "https://www.alltrails.com/" },
-          { name: "Photography", description: "Capture stunning landscapes.", link: "https://www.photographyblog.com/tutorials" },
-          { name: "Fishing", description: "Relax by the water and catch some fish.", link: "https://www.takemefishing.org/" },
-          { name: "Birdwatching", description: "Observe and identify birds in nature.", link: "https://www.audubon.org/" }
+          { name: "Hiking", description: "Enjoy the fresh air with a scenic hike." },
+          { name: "Photography", description: "Capture stunning landscapes." },
+          { name: "Fishing", description: "Relax by the water and catch some fish." },
+          { name: "Birdwatching", description: "Observe and identify birds in nature." }
         ],
         moderate: [
-          { name: "Cycling", description: "Perfect weather for a bike ride.", link: "https://www.bicycling.com/" },
-          { name: "Yoga", description: "Practice yoga in the fresh air.", link: "https://www.yogajournal.com/" },
-          { name: "Gardening", description: "Grow your own flowers or vegetables.", link: "https://www.gardeners.com/" },
-          { name: "Outdoor Picnics", description: "Enjoy a meal outside with friends or family.", link: "https://www.bbcgoodfood.com/howto/guide/best-ever-picnic-recipes" }
+          { name: "Cycling", description: "Perfect weather for a bike ride." },
+          { name: "Yoga", description: "Practice yoga in the fresh air." },
+          { name: "Gardening", description: "Grow your own flowers or vegetables." },
+          { name: "Outdoor Picnics", description: "Enjoy a meal outside with friends or family." }
         ],
         warm: [
-          { name: "Swimming", description: "Cool off by going for a swim.", link: "https://www.swimming.org/" },
-          { name: "Outdoor Sports", description: "Great time for tennis, football, or basketball.", link: "https://www.sportengland.org/" },
-          { name: "Camping", description: "Spend a night under the stars.", link: "https://www.rei.com/learn/expert-advice/camping-beginners.html" },
-          { name: "Kayaking", description: "Paddle through rivers or lakes.", link: "https://paddling.com/" }
+          { name: "Swimming", description: "Cool off by going for a swim." },
+          { name: "Outdoor Sports", description: "Great time for tennis, football, or basketball." },
+          { name: "Camping", description: "Spend a night under the stars." },
+          { name: "Kayaking", description: "Paddle through rivers or lakes." }
         ],
         hot: [
-          { name: "Beach Day", description: "Enjoy the sun at the beach.", link: "https://www.visitcalifornia.com/beaches/" },
-          { name: "Smoothie Making", description: "Stay refreshed with a homemade smoothie.", link: "https://www.allrecipes.com/recipes/138/drinks/smoothies/" },
-          { name: "Ice Skating (Indoor)", description: "Cool down while skating indoors.", link: "https://www.iceskating.org/" },
-          { name: "Water Balloon Fights", description: "Have fun with friends and family while cooling off.", link: "https://www.wikihow.com/Organize-a-Water-Balloon-Fight" }
+          { name: "Beach Day", description: "Enjoy the sun at the beach." },
+          { name: "Smoothie Making", description: "Stay refreshed with a homemade smoothie." },
+          { name: "Ice Skating (Indoor)", description: "Cool down while skating indoors." },
+          { name: "Water Balloon Fights", description: "Have fun with friends and family while cooling off." }
         ]
       };
 
-      // Determine the temperature category
-      let category = "moderate"; // Default category
+      let category = "moderate";
       if (this.temperature !== null) {
         if (this.temperature < 5) {
           category = "cold";
@@ -204,22 +167,21 @@ export default {
         }
       }
 
-      this.hobbies = hobbyMappings[category] || [
-        { name: "Explore New Skills", description: "Discover new hobbies based on your interests.", link: "https://www.skillshare.com/" }
-      ];
-
-      console.log("Selected hobbies:", this.hobbies); // Debugging Log
-    }
+      this.hobbies = (hobbyMappings[category] || []).map((hobby) => ({
+        ...hobby,
+        link: `https://www.google.com/search?q=${encodeURIComponent(hobby.name + " in " + this.city)}`
+      }));
+    },
   },
   mounted() {
     this.getUserInfo();
     this.getTemperature();
     this.getCity();
-  }
+  },
 };
-
-
 </script>
+
+
 
 <style scoped>
 @import "@/assets/style.css";
