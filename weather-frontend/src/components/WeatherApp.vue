@@ -1,5 +1,5 @@
 <template>
-  <div class="weather-container">
+  <div :class="['weather-container', currentWeatherClass]">
     <div class="container">
       <div class="header">
         <div class="menu-icon" @click="toggleDropDown">
@@ -231,6 +231,8 @@
 <script>
 import axios from "axios";
 import moment from "moment";
+import weatherBackground from "@/stores/weatherBackground";
+
 
 export default {
   data() {
@@ -277,6 +279,14 @@ export default {
       recognition: null,
     };
   },
+
+  computed: {
+    currentWeatherClass() {
+      return weatherBackground.currentClass;
+    }
+  },
+
+
 
 
   methods: {
@@ -337,6 +347,9 @@ export default {
           nh3: airPollutionData.nh3,
           o3: airPollutionData.o3,
         };
+
+        weatherBackground.setCondition(this.weather.condition);
+
 
         localStorage.setItem(
           "weatherData",

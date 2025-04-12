@@ -1,8 +1,8 @@
 <template>
-  <div class="weather-container">
-    <div class="container">
+  <div :class="['weather-container', currentWeatherClass]">
+    <div class="contained">
       <div class="header">
-        <div class="menu-icon" @click="toggleDropDown">
+        <div class="menu-icon" v-if="!isDropdownVisible" @click="toggleDropDown">
           <i class="fa-solid fa-bars"></i>
         </div>
 
@@ -66,6 +66,24 @@ export default {
       temperature: null,
       hobbies: [],
     };
+  },
+
+  computed: {
+    currentWeatherClass() {
+      const stored = localStorage.getItem("weatherData");
+      if (stored) {
+        try {
+          const condition = JSON.parse(stored).description?.toLowerCase() || "";
+          if (condition.includes("clear")) return "sunny";
+          if (condition.includes("cloud")) return "cloudy";
+          if (condition.includes("rain") || condition.includes("drizzle") || condition.includes("thunder")) return "rainy";
+          if (condition.includes("snow")) return "snowy";
+        } catch (e) {
+          console.error("Failed to parse condition from weatherData:", e);
+        }
+      }
+      return "sunny"; 
+    }
   },
   methods: {
     toggleDropDown() {
@@ -194,6 +212,19 @@ export default {
   justify-content: center;
 }
 
+.dropdown-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: var(--bg-color2);
+  padding: 20px;
+  z-index: 1000;
+  text-align: left;
+}
+
+
 .card {
   background-color: var(--bg-color2);
   padding: 15px;
@@ -233,4 +264,24 @@ export default {
   text-align: center;
   color: white;
 }
+
+.contained {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  color: white;
+  box-sizing: border-box;
+}
+
+.menu-icon {
+  position: fixed;
+  top: 30px;
+  left: 30px;
+  z-index: 1100; /* Above the menu */
+}
+
+
+
 </style>

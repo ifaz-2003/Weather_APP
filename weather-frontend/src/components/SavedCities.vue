@@ -1,5 +1,5 @@
 <template>
-  <div class="weather-container">
+  <div :class="['weather-container', currentWeatherClass]">
     <div class="contained">
       <!-- Header with Dropdown Menu -->
       <div class="header">
@@ -99,6 +99,25 @@ export default {
       isLogoutPromptVisible: false, // Controls visibility of logout popup
     };
   },
+
+  computed: {
+    currentWeatherClass() {
+      const stored = localStorage.getItem("weatherData");
+      if (stored) {
+        try {
+          const condition = JSON.parse(stored).description?.toLowerCase() || "";
+          if (condition.includes("clear")) return "sunny";
+          if (condition.includes("cloud")) return "cloudy";
+          if (condition.includes("rain") || condition.includes("drizzle") || condition.includes("thunder")) return "rainy";
+          if (condition.includes("snow")) return "snowy";
+        } catch (e) {
+          console.error("Error reading weather description from localStorage:", e);
+        }
+      }
+      return "sunny"; // fallback default
+    }
+  },
+
 
   methods: {
     // Toggle the dropdown menu
@@ -429,11 +448,13 @@ export default {
 
 /* Keep all your existing CSS rules below exactly as they were */
 .contained {
-  max-width: 900px;
-  margin: 20px auto;
-  padding: 20px;
+  width: 100%;
+  max-width: 1200px; /* allow it to scale wider */
+  margin: 0 auto;
+  padding: 2rem;
   text-align: center;
   color: white;
+  box-sizing: border-box;
 }
 
 /* Saved Cities Container */
@@ -575,5 +596,34 @@ export default {
   background-color: darkgrey;
 }
 
+
+
+.weather-container.sunny {
+  background-image: url('@/assets/sunny.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.weather-container.cloudy {
+  background-image: url('@/assets/cloudy.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.weather-container.rainy {
+  background-image: url('@/assets/rainy.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.weather-container.snowy {
+  background-image: url('@/assets/snowy.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 
 </style>

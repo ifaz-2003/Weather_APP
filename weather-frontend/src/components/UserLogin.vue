@@ -1,5 +1,5 @@
 <template>
-  <div class="weather-container">
+  <div :class="['weather-container', weatherClass]">
     <div class="auth-container">
       <h1>iU Weather</h1>
       <nav>
@@ -23,6 +23,7 @@
 
 <script>
 import axios from "axios";
+import weatherBackground from "@/stores/weatherBackground";
 
 
 export default {
@@ -33,6 +34,13 @@ export default {
       errorMessage: "",
     };
   },
+
+  computed: {
+    weatherClass() {
+      return weatherBackground.currentClass || "sunny"; // fallback default
+    }
+  },
+
 
   methods: {
     async login() {
@@ -154,6 +162,41 @@ p {
   position: relative;
   overflow: hidden;
   min-height: 100vh;
+}
+
+.weather-container.sunny {
+  background-image: url('@/assets/sunny.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.weather-container.cloudy {
+  background-image: url('@/assets/cloudy.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.weather-container.rainy {
+  background-image: url('@/assets/rainy.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.weather-container.snowy {
+  background-image: url('@/assets/snowy.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.weather-container.default-bg {
+  background-image: url('@/assets/sunny.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 </style>

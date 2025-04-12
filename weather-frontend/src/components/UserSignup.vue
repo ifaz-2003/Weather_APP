@@ -1,5 +1,5 @@
 <template>
-  <div class="weather-container">
+  <div :class="['weather-container', currentWeatherClass]">
     <div class="auth-container">
       <h1>iU Weather</h1>
       <nav>
@@ -36,6 +36,13 @@ export default {
       errorMessage: "",
     };
   },
+
+  computed: {
+    currentWeatherClass() {
+      return 'sunny'; // Default background
+    }
+  },
+
 
 
   methods: {
@@ -160,6 +167,13 @@ p {
   position: relative;
   overflow: hidden;
   min-height: 100vh;
+}
+
+.weather-container.sunny {
+  background-image: url('@/assets/sunny.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 </style>
