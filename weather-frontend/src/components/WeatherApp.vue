@@ -49,7 +49,7 @@
           <button type="button" id="locationBtn" @click="getUserCoordinates">
             <i class="bx bx-target-lock"></i> Current Location
           </button>
-          <button type="button" id="voiceBtn" @click="startVoiceRecognition">
+          <button type="button" id="voiceBtn"  @click="startVoiceRecognition">
             <i class="fa-solid fa-microphone"></i>
           </button>
         </div>

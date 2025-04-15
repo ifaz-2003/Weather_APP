@@ -10,7 +10,7 @@ import requests
 from django.http import JsonResponse
 from django.conf import settings
 
-# OpenWeather API Key (Use your own key)
+# OpenWeather API Key 
 API_KEY = "69ce9849eb65509427ae460da399e041"
 
 def get_weather(request):

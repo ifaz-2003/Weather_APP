@@ -9,6 +9,9 @@
 
 };
 
+  
+  
+
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
 
 * {
@@ -127,20 +130,35 @@ hr{
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed;
     display: flex;
+    justify-content: center;
+    align-items: center;
 
   }
-  
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    
+}
+
+body {
+    min-height: 100vh;
+    background-color: var(--bg-color1);
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    padding: 0; 
+    display: flex; /* Ensure flex behavior */
+    flex-direction: column;
+}
   
   
   .container {
     width: 100%;
     position: relative;
     min-height: 100vh;
-    margin:0;
-    padding:0;
-    z-index: 1; /* Keeps UI in front of video */
+    margin:0 auto;
+    padding:0 15px;
   }
 
 
@@ -537,6 +555,64 @@ hr{
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+  }
+  
+
+  #voiceBtn {
+    background-color: grey;
+    padding: 10px 15px;
+    border-radius: 8px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  #voiceBtn:hover {
+    background-color: darkgrey;
+  }
+  
+  #voiceBtn i {
+    font-size: 16px;
+  }
+
+
+  .weather-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap; /* Allows wrapping on small screens */
+    margin-top: 20px;
+    justify-content: flex-start;
+  }
+  
+  .weather-input input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid grey;
+    width: 250px;
+    font-size: 1rem;
+  }
+  
+  /* Style for all buttons inside weather-input */
+  .weather-input button {
+    background-color: grey;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.95rem;
+  }
+  
+  .weather-input button:hover {
+    background-color: darkgrey;
   }
   
 
