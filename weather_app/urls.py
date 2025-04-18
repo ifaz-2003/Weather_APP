@@ -21,6 +21,7 @@ from django.urls import path, include, re_path
 from weather.views import FrontendAppView
 from django.views.static import serve
 import os
+import settings
 
 
 
