@@ -17,13 +17,14 @@ Including another URLconf
 
 from django.contrib import admin
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from weather.views import FrontendAppView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('weather.urls')),
-    path('', FrontendAppView.as_view(), name='frontend'),
+    #path('', FrontendAppView.as_view(), name='frontend'),
+    re_path(r'^.*$', FrontendAppView.as_view()),
 
 ]
