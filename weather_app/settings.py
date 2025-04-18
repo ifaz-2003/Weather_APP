@@ -153,7 +153,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # NEW: Add this to collect static files on deploy
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'weather-frontend', 'dist'),
+    os.path.join(BASE_DIR, 'weather_app', 'frontend'),
 ]
 
 # This tells Django where to look for built static assets

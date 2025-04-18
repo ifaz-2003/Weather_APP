@@ -19,12 +19,23 @@ from django.contrib import admin
 from django.contrib import admin
 from django.urls import path, include, re_path
 from weather.views import FrontendAppView
+from django.views.static import serve
+
 
 
 urlpatterns = [
+    # Django admin
     path('admin/', admin.site.urls),
-    path('', include('weather.urls')),
-    #path('', FrontendAppView.as_view(), name='frontend'),
-    re_path(r'^.*$', FrontendAppView.as_view()),
 
+    # API routes
+    path('weather/', include('weather.urls')),
+
+    # Static files from Vue build
+    re_path(r'^js/(?P<path>.*)$', serve, {'document_root': os.path.join(settings.BASE_DIR, 'weather_app/frontend/js')}),
+    re_path(r'^css/(?P<path>.*)$', serve, {'document_root': os.path.join(settings.BASE_DIR, 'weather_app/frontend/css')}),
+    re_path(r'^img/(?P<path>.*)$', serve, {'document_root': os.path.join(settings.BASE_DIR, 'weather_app/frontend/img')}),
+    re_path(r'^favicon.ico$', serve, {'document_root': os.path.join(settings.BASE_DIR, 'weather_app/frontend'), 'path': 'favicon.ico'}),
+
+    # Frontend app fallback (Vue SPA)
+    re_path(r'^.*$', FrontendAppView.as_view()),
 ]
