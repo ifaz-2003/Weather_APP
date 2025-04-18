@@ -9,6 +9,9 @@ from .forms import SignupForm
 import requests
 from django.http import JsonResponse
 from django.conf import settings
+from django.views.generic import View
+from django.http import HttpResponse
+import os
 
 # OpenWeather API Key 
 API_KEY = "69ce9849eb65509427ae460da399e041"
@@ -122,3 +125,16 @@ def save_city(request):
 def remove_city(request, city_name):
     SavedCity.objects.filter(user=request.user, city_name=city_name).delete()
     return Response({"message": "City removed successfully"})
+
+
+
+class FrontendAppView(View):
+    def get(self, request):
+        try:
+            with open(os.path.join(os.path.dirname(__file__), '../frontend/index.html')) as f:
+                return HttpResponse(f.read())
+        except FileNotFoundError:
+            return HttpResponse(
+                "index.html not found! Build your Vue frontend before deploying.",
+                status=501,
+            )

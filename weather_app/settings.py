@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 from datetime import timedelta
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -145,3 +146,26 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Refresh token expires after 1 day
     'SIGNING_KEY': SECRET_KEY,
 }
+
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# NEW: Add this to collect static files on deploy
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'weather-frontend', 'dist'),
+]
+
+# This tells Django where to look for built static assets
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Include the Vue build folder for serving static files
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'weather_app', 'frontend'),
+]
+
+# Tell Django to use the Vue index.html as a template base
+TEMPLATES[0]['DIRS'] = [
+    os.path.join(BASE_DIR, 'weather_app', 'frontend')
+]
