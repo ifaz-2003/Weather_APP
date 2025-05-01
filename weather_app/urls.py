@@ -30,7 +30,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # API routes
-    path('weather/', include('weather.urls')),
+# ✅ NEW
+    path('api/', include('weather.urls')),
 
     # Static files from Vue build
     re_path(r'^js/(?P<path>.*)$', serve, {'document_root': os.path.join(settings.BASE_DIR, 'weather_app/frontend/js')}),

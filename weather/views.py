@@ -11,6 +11,8 @@ from django.http import JsonResponse
 from django.conf import settings
 from django.views.generic import View
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
 import os
 
 # OpenWeather API Key 
@@ -41,6 +43,7 @@ def get_weather(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])  # Allows unauthenticated users to register
+@csrf_exempt
 def signup_api(request):
     form = SignupForm(request.data)
     if form.is_valid():
@@ -55,6 +58,7 @@ def signup_api(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@csrf_exempt
 def login_api(request):
     username = request.data.get("username")
     password = request.data.get("password")

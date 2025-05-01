@@ -10,10 +10,34 @@
       <div class="signup-box">
         <h2>Signup</h2>
         <form @submit.prevent="signup">
-          <input v-model="username" type="text" placeholder="Username" required />
-          <input v-model="email" type="email" placeholder="Email" required />
-          <input v-model="password1" type="password" placeholder="Password" required />
-          <input v-model="password2" type="password" placeholder="Confirm Password" required />
+          <div class="input-group">
+            <input v-model="username" type="text" placeholder="Username" required />
+            <button type="button" class="voice-btn" @click="startVoiceInput('username')">
+              <i class="fa-solid fa-microphone"></i>
+            </button>
+          </div>
+
+          <div class="input-group">
+            <input v-model="email" type="email" placeholder="Email" required />
+            <button type="button" class="voice-btn" @click="startVoiceInput('email')">
+              <i class="fa-solid fa-microphone"></i>
+            </button>
+          </div>
+
+          <div class="input-group">
+            <input v-model="password1" type="password" placeholder="Password" required />
+            <button type="button" class="voice-btn" @click="startVoiceInput('password1')">
+              <i class="fa-solid fa-microphone"></i>
+            </button>
+          </div>
+
+          <div class="input-group">
+            <input v-model="password2" type="password" placeholder="Confirm Password" required />
+            <button type="button" class="voice-btn" @click="startVoiceInput('password2')">
+              <i class="fa-solid fa-microphone"></i>
+            </button>
+          </div>
+
           <button type="submit">Signup</button>
         </form>
         <p>Already have an account? <router-link to="/login">Login</router-link></p>
@@ -43,8 +67,6 @@ export default {
     }
   },
 
-
-
   methods: {
     async signup() {
       try {
@@ -55,39 +77,67 @@ export default {
           password2: this.password2,
         });
 
-        console.log("Signup API response:", response.data); // Log full response
-
-        // Check if username exists before storing
         if (response.data.username) {
           localStorage.setItem("username", response.data.username);
-        } else {
-          console.warn("Username is missing from the API response");
         }
 
-
-
-        // Store JWT token in localStorage
         localStorage.setItem("access_token", response.data.access_token);
-
-
-        // Redirect to WeatherApp after successful signup
         this.$router.push("/weather");
       } catch (error) {
         this.errorMessage = "Signup failed: " + JSON.stringify(error.response.data);
       }
     },
-  },
+
+    startVoiceInput(field) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Your browser does not support voice recognition.");
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        const parsed = this.parseSpelledInput(transcript);
+        this[field] = parsed;
+      };
+
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+        alert("Voice input error: " + event.error);
+      };
+
+      recognition.start();
+    },
+
+    parseSpelledInput(transcript) {
+      const map = {
+        "zero": "0", "one": "1", "two": "2", "three": "3",
+        "four": "4", "five": "5", "six": "6", "seven": "7",
+        "eight": "8", "nine": "9",
+        "dot": ".", "period": ".", "underscore": "_",
+        "dash": "-", "minus": "-", "at": "@", "space": " ",
+        "comma": ",", "apostrophe": "'", "quote": "\""
+      };
+
+      const words = transcript.toLowerCase().split(/[\s,-]+/);
+      return words.map(w => map[w] || w[0]).join('');
+    }
+  }
 };
 </script>
 
 <style scoped>
 .auth-container {
-  max-width: 1200px;
-  margin: auto;
+  width: 100%;
+  max-width: 500px;
   text-align: center;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
@@ -119,6 +169,7 @@ nav a:hover {
   display: inline-block;
   width: 100%;
   max-width: 400px;
+  margin: auto;
 }
 
 h2 {
@@ -127,17 +178,43 @@ h2 {
   color: white;
 }
 
-input {
-  width: 90%;
-  padding: 10px;
+.input-group {
+  display: flex;
+  align-items: center;
+  width: 100%;
   margin: 10px 0;
-  border: 1px solid #b2dfdb;
-  border-radius: 4px;
+}
+
+.input-group input {
+  flex: 1;
+  padding: 10px;
   font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid whitesmoke;
+  margin-right: 10px;
+}
+
+.voice-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 1rem;
+  border-radius: 4px;
+  background-color: grey;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voice-btn:hover {
+  background-color: darkgrey;
 }
 
 button {
-  width: 95%;
+  width: 100%;
   padding: 10px;
   background-color: grey;
   color: #fff;
@@ -161,8 +238,6 @@ p {
   margin-top: 10px;
 }
 
-
-
 .weather-container {
   position: relative;
   overflow: hidden;
@@ -175,5 +250,4 @@ p {
   background-position: center;
   background-repeat: no-repeat;
 }
-
 </style>
