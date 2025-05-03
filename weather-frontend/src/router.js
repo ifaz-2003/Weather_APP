@@ -4,11 +4,16 @@ import Login from "@/components/UserLogin.vue";
 import WeatherApp from "@/components/WeatherApp.vue"; // Import WeatherApp
 import UserHobbies from "@/components/UserHobbies.vue";
 import SavedCities from "@/components/SavedCities.vue";
+import AppFAQ from "@/components/AppFAQ.vue";
+import AppFeature from "@/components/AppFeature.vue";
+
 const routes = [
   { path: "/signup", component: Signup },
   { path: "/login", component: Login },
   { path: "/hobbies", component: UserHobbies},
   { path: "/preferences", component: SavedCities},
+  { path: "/feature", component: AppFeature},
+  { path: "/faq", component: AppFAQ},
   { 
     path: "/weather", 
     component: WeatherApp, 
