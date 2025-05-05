@@ -1,6 +1,7 @@
 <template>
   <div :class="['weather-container', currentWeatherClass]">
     <div class="auth-container">
+    <!-- initial page links -->
       <h1>iU Weather</h1>
       <nav>
         <router-link to="/">Home</router-link>
@@ -9,6 +10,7 @@
       </nav>
       <div class="signup-box">
         <h2>Signup</h2>
+        <!-- signup forms including usernam, email etc -->
         <form @submit.prevent="signup">
           <div class="input-group">
             <input v-model="username" type="text" placeholder="Username" required />
@@ -40,6 +42,7 @@
 
           <button type="submit">Signup</button>
         </form>
+        <!-- option for redirection to login -->
         <p>Already have an account? <router-link to="/login">Login</router-link></p>
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
       </div>
@@ -74,7 +77,7 @@ export default {
           username: this.username,
           email: this.email,
           password1: this.password1,
-          password2: this.password2,
+          password2: this.password2, //user details assignment
         });
 
         if (response.data.username) {
@@ -121,7 +124,7 @@ export default {
         "eight": "8", "nine": "9",
         "dot": ".", "period": ".", "underscore": "_",
         "dash": "-", "minus": "-", "at": "@", "space": " ",
-        "comma": ",", "apostrophe": "'", "quote": "\""
+        "comma": ",", "apostrophe": "'", "quote": "\"" //helps with speecha accuracy 
       };
 
       const words = transcript.toLowerCase().split(/[\s,-]+/);

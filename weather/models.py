@@ -4,7 +4,7 @@ from django.conf import settings  # Import settings to use AUTH_USER_MODEL
 
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)  # Ensure email is unique
-    REQUIRED_FIELDS = ['email']  # Makes email required
+    REQUIRED_FIELDS = ['email']  # Makes email a need
 
 class SavedCity(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

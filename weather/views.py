@@ -15,11 +15,12 @@ from django.views.decorators.csrf import csrf_exempt
 
 import os
 
-# OpenWeather API Key 
+# Private OpenWeather API Key 
 API_KEY = "69ce9849eb65509427ae460da399e041"
 
+#returns current weather for a specific city
 def get_weather(request):
-    city = request.GET.get("city", "London")  # Default to London
+    city = request.GET.get("city", "London")  # default to London
     if not city:
         return JsonResponse({"error": "City not provided"}, status=400)
 
@@ -41,6 +42,7 @@ def get_weather(request):
     except requests.RequestException:
         return JsonResponse({"error": "Failed to connect to OpenWeather API"}, status=500)
 
+
 @api_view(['POST'])
 @permission_classes([AllowAny])  # Allows unauthenticated users to register
 @csrf_exempt
@@ -55,6 +57,8 @@ def signup_api(request):
             "refresh_token": str(refresh)
         })
     return Response(form.errors, status=400)
+
+# Handles user login through username or email & returns JWT tokens if successful
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -83,6 +87,7 @@ def login_api(request):
         })
     return Response({"error": "Invalid credentials"}, status=400)
 
+#gets all saved city based on what user is logged on
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_saved_cities(request):
@@ -98,7 +103,7 @@ def get_saved_cities(request):
     ]
     return Response(city_data)
 
-
+#allows user to save a city
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def save_city(request):
@@ -124,6 +129,7 @@ def save_city(request):
     )
     return Response({"message": "City saved successfully"})
 
+#allows user to remove a city
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def remove_city(request, city_name):
@@ -131,7 +137,7 @@ def remove_city(request, city_name):
     return Response({"message": "City removed successfully"})
 
 
-
+#needed for deployment to render
 class FrontendAppView(View):
     def get(self, request):
         try:

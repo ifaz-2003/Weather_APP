@@ -6,7 +6,7 @@
           <i class="fa-solid fa-bars"></i>
         </div>
 
-        <!-- Dropdown Menu -->
+        <!-- Dropdown menu -->
         <transition name="slide-fade">
           <div class="dropdown-menu" v-if="isDropdownVisible">
             <button class="close-btn" @click="toggleDropDown">✖</button>
@@ -25,6 +25,7 @@
           </div>
         </transition>
 
+        <!-- logout -->
         <transition name="fade">
           <div v-if="isLogoutPromptVisible" class="logout-overlay">
             <div class="logout-popup">
@@ -43,6 +44,7 @@
 
       <h2 class="page-title">Hobbies for {{ city }}</h2>
 
+      <!-- hobbies display -->
       <div class="hobbies-container">
         <div class="card" v-for="(hobby, index) in hobbies" :key="index">
           <h3>{{ hobby.name }}</h3>
@@ -117,7 +119,7 @@ export default {
         }
       }
 
-      // ✅ fetchHobbies is now moved to run after city is set
+      // fetchHobbies is now moved to run after city is set
     },
     getCity() {
       const weatherData = localStorage.getItem("weatherData");
@@ -128,7 +130,7 @@ export default {
           if (parsedWeather.city) {
             this.city = parsedWeather.city;
 
-            // ✅ Now that city is known, fetch hobbies
+            // fetch hobbies based on city searched
             this.fetchHobbies();
           }
         } catch (error) {
@@ -137,6 +139,7 @@ export default {
       }
     },
     fetchHobbies() {
+      // some  possible hobbies mapped based on weather conditions
       const hobbyMappings = {
         cold: [
           { name: "Knitting", description: "Create warm clothes for the season." },
@@ -171,6 +174,7 @@ export default {
       };
 
       let category = "moderate";
+      //hobbies are also taken into account by temperature 
       if (this.temperature !== null) {
         if (this.temperature < 5) {
           category = "cold";
@@ -204,6 +208,7 @@ export default {
 <style scoped>
 @import "@/assets/style.css";
 
+/*  css styles consistent through all components */
 .hobbies-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

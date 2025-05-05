@@ -1,6 +1,6 @@
 
 import { reactive } from "vue";
-
+//background dynamics stored here
 const weatherBackground = reactive({
   currentClass: "sunny", 
   setCondition(condition) {

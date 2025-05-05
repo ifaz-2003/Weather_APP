@@ -1,13 +1,13 @@
 <template>
   <div :class="['weather-container', currentWeatherClass]">
     <div class="contained">
-      <!-- Header with Dropdown Menu -->
+      <!-- Header with dropdown menu -->
       <div class="header">
         <div class="menu-icon" @click="toggleDropdown">
           <i class="fa-solid fa-bars"></i>
         </div>
 
-        <!-- Dropdown Menu -->
+        <!-- Dropdown menu -->
         <transition name="slide-fade">
           <div class="dropdown-menu" v-if="isDropdownVisible">
             <button class="close-btn" @click="toggleDropdown">✖</button>
@@ -51,10 +51,10 @@
         </transition>
       </div>
 
-      <!-- Main Content -->
+      <!-- Main content -->
       <h2>Saved Cities</h2>
 
-      <!-- City Input -->
+      <!-- City input -->
       <div class="add-city">
         <input type="text" v-model="newCity" placeholder="Enter city name" />
         <button @click="saveCity">Save City</button>
@@ -63,7 +63,7 @@
         </button>
       </div>
 
-      <!-- Saved Cities List -->
+      <!-- Saved cities list -->
       <div class="saved-cities">
         <ul>
           <li v-for="(city, index) in savedCities" :key="index">
@@ -75,7 +75,7 @@
         </ul>
       </div>
 
-      <!-- Weather Display -->
+      <!-- Weather display -->
       <div v-if="weather">
         <h3>{{ weather.city }}, {{ weather.country }}</h3>
         <p>{{ weather.temp }}°C - {{ weather.description }}</p>
@@ -102,6 +102,7 @@ export default {
 
   computed: {
     currentWeatherClass() {
+      //responsible for backgrounds
       const stored = localStorage.getItem("weatherData");
       if (stored) {
         try {
@@ -114,7 +115,7 @@ export default {
           console.error("Error reading weather description from localStorage:", e);
         }
       }
-      return "sunny"; // fallback default
+      return "sunny"; //  default
     }
   },
 
@@ -146,7 +147,7 @@ export default {
       return;
     }
 
-    this.recognition = new SpeechRecognition();
+    this.recognition = new SpeechRecognition(); //initialises voice interaction
     this.recognition.lang = "en-US";
     this.recognition.interimResults = false;
     this.recognition.maxAlternatives = 1;
@@ -157,11 +158,11 @@ export default {
         not_found: "I couldn't find weather data for that city. Please try again.",
         no_speech: "I didn't hear anything. Please say the name of a city.",
         default: "Sorry, I didn't understand. Please try again.",
-        invalid_city: "That city doesn't exist in our database. Please try a different city name."
+        invalid_city: "That city doesn't exist in our database. Please try a different city name." //various messages in various events stored
       };
       
       const message = messages[errorType] || messages.default;
-      await this.speak(message); // Use this.speak()
+      await this.speak(message); // Use this.speak to output to user
       this.startVoiceRecognition();
     };
 
@@ -173,14 +174,14 @@ export default {
 
       const transcript = event.results[0][0].transcript.trim();
       if (!transcript) {
-        await handleError("no_speech");
+        await handleError("no_speech"); 
         return;
       }
 
       this.newCity = transcript;
       try {
         const geoResponse = await axios.get(
-          `https://api.openweathermap.org/geo/1.0/direct?q=${this.newCity}&limit=1&appid=69ce9849eb65509427ae460da399e041`
+          `https://api.openweathermap.org/geo/1.0/direct?q=${this.newCity}&limit=1&appid=69ce9849eb65509427ae460da399e041` //API call
         );
 
         if (!geoResponse.data.length) {
@@ -221,8 +222,8 @@ export default {
   },
 
     cancelAddCity() {
-      this.isAddCityPromptVisible = false; // ✅ Hide the popup
-      this.newCity = ""; // ✅ Clear the city name
+      this.isAddCityPromptVisible = false; // Hide the popup
+      this.newCity = ""; // Clear the city name
     },
 
     cancelLogout() {
@@ -235,7 +236,7 @@ export default {
       this.$router.push("/login"); // Redirect to login page
     },
 
-    // Refresh the JWT token if it expires
+    // Refresh the JWT token in the event of expiry
     async refreshToken() {
       const refreshToken = localStorage.getItem('refresh_token');
 
@@ -333,16 +334,16 @@ export default {
 
         console.log("Backend response:", response.data); // Debugging statement
 
-        this.newCity = ""; // Clear the input field
+        this.newCity = ""; // clear input field
         await this.fetchSavedCities(); // Refresh the list
       } catch (error) {
         if (error.response && error.response.status === 401) {
-          // Token is expired, refresh it
+          // refresh expired token
           await this.refreshToken();
           await this.saveCity(); // Retry the request
         } else {
           console.error("Error saving city:", error.response ? error.response.data : error);
-          alert("Failed to save city. Please try again.");
+          alert("Failed to save city. Please try again."); 
         }
       }
     },
@@ -352,7 +353,7 @@ export default {
       const token = localStorage.getItem('access_token');
 
       if (!token) {
-        console.error("No authentication token found. Please log in.");
+        console.error("No authentication token found. Please log in."); //debug statements
         alert("Session expired. Please log in again.");
         return;
       }
@@ -494,7 +495,7 @@ export default {
   background-color: darkgrey;
 }
 
-/* Saved Cities Grid */
+/* Saved cities grid */
 .saved-cities {
   display: flex;
   flex-direction: column; /* Stack cities below input */
@@ -502,7 +503,7 @@ export default {
   gap: 15px;
 }
 
-/* Individual City Box */
+/* Individual city box */
 .saved-cities ul {
   list-style: none;
   padding: 0;
@@ -557,8 +558,8 @@ export default {
   left: 0;
   width: 100%;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-  backdrop-filter: blur(5px); /* Blurring effect */
+  background: rgba(0, 0, 0, 0.5); /* half transparent black */
+  backdrop-filter: blur(5px); /* transition effect */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -597,7 +598,7 @@ export default {
 }
 
 
-
+/* controls backgrounds */
 .weather-container.sunny {
   background-image: url('@/assets/sunny.jpg');
   background-size: cover;

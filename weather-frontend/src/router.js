@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Signup from "@/components/UserSignup.vue";
 import Login from "@/components/UserLogin.vue";
-import WeatherApp from "@/components/WeatherApp.vue"; // Import WeatherApp
+import WeatherApp from "@/components/WeatherApp.vue"; 
 import UserHobbies from "@/components/UserHobbies.vue";
 import SavedCities from "@/components/SavedCities.vue";
 import AppFAQ from "@/components/AppFAQ.vue";
-import AppFeature from "@/components/AppFeature.vue";
+import AppFeature from "@/components/AppFeature.vue";  //imported components
 
 const routes = [
   { path: "/signup", component: Signup },
@@ -17,9 +17,9 @@ const routes = [
   { 
     path: "/weather", 
     component: WeatherApp, 
-    meta: { requiresAuth: true } // Protect this route
+    meta: { requiresAuth: true } // Route protection
   },
-  { path: "/", redirect: "/login" } // Default route redirects to login
+  { path: "/", redirect: "/login" } // Default route directs back to login
 ];
 
 const router = createRouter({
@@ -27,12 +27,12 @@ const router = createRouter({
   routes,
 });
 
-// Navigation Guard: Redirect users if not authenticated
+// Navigation guard: Redirect users if not authenticated
 router.beforeEach((to, from, next) => {
   const isAuthenticated = !!localStorage.getItem("access_token");
 
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next("/login"); // Redirect to login if not logged in
+    next("/login"); // Redirected to login if not logged in
   } else {
     next();
   }

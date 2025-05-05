@@ -9,6 +9,7 @@
       </nav>
       <div class="login-box">
         <h2>App Features</h2>
+        <!-- List of features -->
         <ul class="feature-list">
           <li>🌦️ Real-time weather by city or location</li>
           <li>🎤 Voice-based login and city search</li>

@@ -3,6 +3,7 @@
     <div class="auth-container">
       <h1>iU Weather</h1>
       <nav>
+      <!-- initial page links -->
         <router-link to="/">Home</router-link>
         <router-link to="/feature">Feature</router-link>
         <router-link to="/faq">FAQ?</router-link>
@@ -21,7 +22,7 @@
 </template>
 
 <script>
-import weatherBackground from "@/stores/weatherBackground";
+import weatherBackground from "@/stores/weatherBackground"; //weather backgrounds 
 
 export default {
   name: "AppFAQ",
@@ -33,7 +34,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped> 
 .auth-container {
   max-width: 1200px;
   margin: auto;

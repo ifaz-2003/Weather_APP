@@ -2,13 +2,16 @@
   <div :class="['weather-container', weatherClass]">
     <div class="auth-container">
       <h1>iU Weather</h1>
+      <!-- initial page links -->
       <nav>
         <router-link to="/">Home</router-link>
         <router-link to="/feature">Feature</router-link>
         <router-link to="/faq">FAQ?</router-link>
       </nav>
+
+      <!-- login box with username and password field -->
       <div class="login-box">
-        <h2>Login</h2>
+        <h2>Login</h2> 
         <form @submit.prevent="login">
           <div class="input-group">
             <input v-model="username" type="text" placeholder="Username or Email" required />
@@ -48,7 +51,7 @@ export default {
 
   computed: {
     weatherClass() {
-      return weatherBackground.currentClass || "sunny"; // fallback default
+      return weatherBackground.currentClass || "sunny"; // default despite weather currently
     }
   },
 
@@ -82,7 +85,7 @@ export default {
         "eight": "8", "nine": "9",
         "dot": ".", "period": ".", "underscore": "_",
         "dash": "-", "minus": "-", "at": "@", "space": " ",
-        "comma": ",", "apostrophe": "'", "quote": "\""
+        "comma": ",", "apostrophe": "'", "quote": "\"" //better accuracy for voice input
       };
 
       const words = transcript.toLowerCase().split(/[\s,-]+/);
@@ -93,7 +96,7 @@ export default {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
         alert("Your browser does not support voice recognition.");
-        return;
+        return; //if browser does not suoport
       }
 
       const recognition = new SpeechRecognition();

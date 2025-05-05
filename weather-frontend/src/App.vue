@@ -16,6 +16,8 @@ export default {
 <style>
 @import "@/assets/style.css";
 
+
+
 .page-fade-enter-active, .page-fade-leave-active {
   transition: opacity 0.3s ease-in-out;
 }

@@ -3,10 +3,10 @@
     <div class="container">
       <div class="header">
         <div class="menu-icon" @click="toggleDropDown">
-          <i class="fa-solid fa-bars"></i> <!-- FontAwesome hamburger icon -->
+          <i class="fa-solid fa-bars"></i> <!-- dropdown icon -->
         </div>
 
-        <!-- Dropdown Menu -->
+        <!-- Dropdown menu -->
         <transition name="slide-fade">
           <div class="dropdown-menu" v-if="isDropdownVisible">
             <button class="close-btn" @click="toggleDropDown">✖</button>
@@ -25,7 +25,7 @@
           </div>
         </transition>
 
-        <!-- Logout Confirmation Popup -->
+        <!-- Logout confirmation  -->
         <transition name="fade">
           <div v-if="isLogoutPromptVisible" class="logout-overlay">
             <div class="logout-popup">
@@ -39,6 +39,7 @@
         </transition>
 
         <div class="header-left">
+        <!-- main weather interface -->
           <h2>Welcome, {{ username }}!</h2>
         </div>
         <div class="weather-input">
@@ -68,7 +69,7 @@
                 <img :src="weather.icon" alt="Weather Icon" />
               </div>
               <button class="speaker-button" @click="speakWeather">
-                <i class="fa-solid fa-volume-up"></i> <!-- Speaker Icon -->
+                <i class="fa-solid fa-volume-up"></i> <!-- Speaker icon -->
               </button>
               <hr />
               <div class="card-footer">
@@ -81,7 +82,7 @@
           <div class="card">
             <h2>5 Days Forecast</h2>
             <button class="speaker-button" @click="speakAverageForecast">
-              <i class="fa-solid fa-volume-up"></i> <!-- Speaker Icon -->
+              <i class="fa-solid fa-volume-up"></i> <!-- Speaker icon -->
             </button>
             <div class="day-forecast">
               <div class="forecast-item" v-for="(day, index) in forecast" :key="index">
@@ -95,7 +96,7 @@
             </div>
           </div>
         </div>
-
+        <!-- page split into different sections displaying weather-->
         <div class="weather-right">
           <h2>Today's Highlights</h2>
           <div class="highlights">
@@ -231,7 +232,7 @@
 <script>
 import axios from "axios";
 import moment from "moment";
-import weatherBackground from "@/stores/weatherBackground";
+import weatherBackground from "@/stores/weatherBackground"; //imports dynamic backgrounds
 
 
 export default {
@@ -290,7 +291,7 @@ export default {
 
 
   methods: {
-    async fetchWeather() {
+    async fetchWeather() { //obtains necessary weather details
       try {
         // Fetch city coordinates
         const geoResponse = await axios.get(
@@ -315,7 +316,7 @@ export default {
         );
         const airPollutionData = airPollutionResponse.data.list[0].components;
 
-        // Fetch 5-day forecast
+        // Fetch 5 day forecast
         const forecastResponse = await axios.get(
           `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=69ce9849eb65509427ae460da399e041`
         );
@@ -360,7 +361,7 @@ export default {
           })
         );
 
-        // Update 5-day forecast
+        // Update 5 day forecast
         this.forecast = forecastData
           .filter((_, index) => index % 8 === 0)
           .slice(0, 5)
@@ -383,7 +384,7 @@ export default {
       }
     },
 
-    speakWeather() {
+    speakWeather() { //tells user the weather via voice output
       if (!this.weather.temp || !this.weather.city) {
         alert("Weather data not available for speech output.");
         return;
@@ -398,7 +399,7 @@ export default {
     },
 
 
-    speakSunriseSunset() {
+    speakSunriseSunset() { //tells user sunrise and sunset times via voice
       if (!this.weather.sunrise || !this.weather.sunset) {
         alert("Sunrise and sunset data not available for speech output.");
         return;
@@ -440,7 +441,7 @@ export default {
       }
     },
 
-    async getUserCoordinates() {
+    async getUserCoordinates() { //gets user location
       try {
         const position = await new Promise((resolve, reject) => {
           navigator.geolocation.getCurrentPosition(resolve, reject);
@@ -483,7 +484,7 @@ export default {
       this.username = localStorage.getItem("username") || "Guest";
     },
 
-    startVoiceRecognition() {
+    startVoiceRecognition() { //for city searching 
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
         alert("Your browser does not support speech recognition.");

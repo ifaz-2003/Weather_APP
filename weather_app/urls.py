@@ -30,7 +30,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # API routes
-# ✅ NEW
     path('api/', include('weather.urls')),
 
     # Static files from Vue build
@@ -39,6 +38,5 @@ urlpatterns = [
     re_path(r'^img/(?P<path>.*)$', serve, {'document_root': os.path.join(settings.BASE_DIR, 'weather_app/frontend/img')}),
     re_path(r'^favicon.ico$', serve, {'document_root': os.path.join(settings.BASE_DIR, 'weather_app/frontend'), 'path': 'favicon.ico'}),
 
-    # Frontend app fallback (Vue SPA)
     re_path(r'^.*$', FrontendAppView.as_view()),
 ]
